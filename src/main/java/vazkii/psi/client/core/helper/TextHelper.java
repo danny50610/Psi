@@ -46,7 +46,37 @@ public final class TextHelper {
 				lineStr += spaced;
 
 				controlCodes = toControlCodes(getControlCodes(prev));
-				if(font.getStringWidth(lineStr) > width) {
+				if(font.getStringWidth(token) > width) {
+					if (!words.isEmpty()) {
+						lines.add(words);
+						words = new ArrayList();
+					}
+
+					String temp = "";
+					int nowWordWidth = 0;
+					for (int i = 0; i < token.length(); i++) {
+						char c = token.charAt(i);
+						int charWidth = font.getCharWidth(c);
+						if (nowWordWidth + charWidth > width) {
+							words.add(temp);
+							lines.add(words);
+							temp = "";
+							nowWordWidth = 0;
+							words = new ArrayList();
+						}
+
+						nowWordWidth += charWidth;
+						temp += c;
+					}
+					if (!temp.isEmpty()) {
+						words.add(temp);
+						lines.add(words);
+						words = new ArrayList();
+					}
+
+					continue;
+				}
+				else if(font.getStringWidth(lineStr) > width) {
 					lines.add(words);
 					lineStr = controlCodes + spaced;
 					words = new ArrayList();
